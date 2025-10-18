@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Portal - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+    :root {
+        --maroon: #800000;
+        --white: #ffffff;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        font-family: Arial, sans-serif;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        padding: 20px;
+        width: calc(100% - 250px);
+        transition: all 0.3s;
+    }
+
+    .content-section {
+        display: none;
+    }
+
+    .content-section.active {
+        display: block;
+    }
+
+    .quick-stats {
+        background: linear-gradient(45deg, var(--maroon), #a52a2a);
+        color: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .action-button {
+        background-color: var(--maroon);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        margin: 0.5rem;
+        transition: all 0.3s;
+        width: 100%;
+        text-align: left;
+    }
+
+    .action-button:hover {
+        background-color: #a52a2a;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .stats-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: #dc3545;
+        color: white;
+        border-radius: 50%;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .recent-activity {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .text-maroon {
+        color: var(--maroon);
+    }
+
+    
+
+    .btn-maroon {
+        background-color: var(--maroon);
+        color: white;
+    }
+
+    .btn-maroon:hover {
+        background-color: #a52a2a;
+        color: white;
+    }
+
+    .btn-gold {
+    background-color: #FFD700;
+    border-color: #FFD700;
+    color: #000;
+    }
+
+    .btn-gold:hover {
+        background-color: #FFC700;
+        border-color: #FFC700;
+        color: #000;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(128, 0, 0, 0.05);
+        cursor: pointer;
+    }
+
+    .clickable-row {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .clickable-row:hover {
+        background-color: rgba(128, 0, 0, 0.08) !important;
+    }
+
+    .clickable-row:active {
+        background-color: rgba(128, 0, 0, 0.12) !important;
+    }
+
+    /* Table responsive improvements */
+    .table-responsive {
+        overflow-x: visible;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    #studentsTable {
+        margin-bottom: 0;
+        width: 100%;
+        table-layout: auto;
+    }
+
+    #studentsTable th,
+    #studentsTable td {
+        vertical-align: middle;
+        padding: 12px 15px;
+    }
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        #studentsTable th,
+        #studentsTable td {
+            padding: 8px 10px;
+            font-size: 0.9rem;
+        }
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px !important;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: none;
+    }
+    
+    /* Mobile Header */
+    .mobile-header {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to right, #800000, #a52a2a);
+        color: white;
+        padding: 15px 20px;
+        z-index: 999;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .mobile-header .header-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .mobile-header .menu-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .mobile-header .header-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+        flex-grow: 1;
+        text-align: center;
+    }
+    
+    /* Dashboard styles */
+    .dashboard-title {
+        color: var(--maroon);
+        font-weight: bold;
+    }
+    .dashboard-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        border: none;
+        width: 100%;
+    }
+    .stat-card {
+        transition: none;
+        height: 100%;
+        border: none;
+    }
+    .stat-card:hover {
+        transform: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #800000;
+        margin: 10px 0;
+    }
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .logo {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    
+
+    .option-card {
+        transition: all 0.3s;
+        height: 100%;
+    }
+    .option-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+    }
+    
+    .back-button {
+        margin-bottom: 15px;
+        cursor: pointer;
+    }
+    
+    .grade-input {
+        width: 60px;
+        text-align: center;
+    }
+    
+    .enable-grades-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .bulk-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .sidebar {
+        background: linear-gradient(to bottom, #800000, #4d0000);
+        min-height: 100vh;
+        padding: 20px 0;
+        width: 250px;
+        position: fixed;
+    }
+    .sidebar a {
+        display: block;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        transition: none;
+    }
+    .sidebar a i {
+    margin-right: 0.5rem; /* 8px */
+    width: 20px;
+    text-align: center;
+}
+    .sidebar a:hover {
+        background-color: #a00000;
+        color: white !important;
+    }
+    .sidebar a.active {
+        background-color: #a00000;
+    }
+    .university-name {
+        font-size: 14px;
+        line-height: 1.3;
+        padding: 0 15px;
+        text-align: center;
+        margin-bottom: 15px;
+        color: white;
+    }
+    .sidebar-logo {
+        display: block;
+        margin: 0 auto 15px auto;
+        max-width: 80px;
+        max-height: 80px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 50%;
+        background-color: white;
+        padding: 5px;
+    }
+    @media (max-width: 768px) {
+        .mobile-header {
+            display: block;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 250px;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .main-content {
+            margin-left: 0;
+            margin-top: 60px;
+            width: 100%;
+            padding: 20px;
+        }
+        .toggle-btn {
+            display: none;
+        }
+        }
+    .form-check-input:checked {
+        background-color: #800000;
+        border-color: #800000;
+    }
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(128, 0, 0, 0.25);
+    }
+    
+    /* Dashboard specific styles */
+    .admin-profile-icon {
+        font-size: 5rem;
+        color: var(--maroon);
+    }
+    
+    /* Teacher name link styling */
+    .teacher-name {
+        color: #0d6efd;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .teacher-name:hover {
+        text-decoration: underline;
+        color: #0a58ca;
+    }
+    
+    .final-rating {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+    
+    .text-success {
+        color: #198754 !important;
+    }
+    
+    .text-danger {
+        color: #dc3545 !important;
+    }
+    
+    .badge-student-count {
+        background-color: var(--maroon);
+        color: white;
+    }
+
+    /* Archive System Styling */
+    .btn-warning {
+        background-color: var(--maroon);
+        border-color: var(--maroon);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background-color: #a52a2a;
+        border-color: #a52a2a;
+        color: white;
+    }
+
+    .alert-success {
+        border-left: 4px solid var(--maroon);
+        background-color: #f8f9fa;
+    }
+
+    /* Style for archived rows */
+    tr[data-archived="true"] {
+        opacity: 0.7;
+        background-color: #f8f9fa;
+    }
+
+    tr[data-archived="true"] td {
+        color: #6c757d;
+    }
+
+    /* Archive modal header */
+    .modal-header.bg-warning {
+        background-color: var(--maroon) !important;
+        color: white !important;
+    }
+
+    .modal-header.bg-warning .btn-close {
+        filter: invert(1);
+    }
+    
+    /* Fix modal width so it doesn't cover sidebar */
+    .modal-dialog {
+        max-width: 800px; /* adjust to preferred size */
+        margin: 1.75rem auto;
+    }
+
+    #classStudentsModal .modal-dialog {
+        max-width: 800px; /* wider for student grades */
+    }
+
+    /* Student Info Modal - align with main content */
+    #studentInfoModal .modal-dialog {
+        max-width: calc(100% - 270px); /* Account for sidebar width (250px) + margin */
+        margin: 1.75rem 10px 1.75rem 260px; /* Left margin aligns with main content */
+    }
+
+    @media (max-width: 768px) {
+        #studentInfoModal .modal-dialog {
+            max-width: 95%;
+            margin: 1.75rem auto;
+        }
+    }
+    /* Student Management Styles */
+    .student-id {
+        font-weight: 500;
+    }
+
+    .badge-year {
+        background-color: var(--maroon);
+        color: white;
+        font-size: 0.75em;
+    }
+
+    /* Student Info Modal Styles */
+    .modal-xl {
+        max-width: 1000px;
+    }
+
+    .student-info-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 15px 20px;
+        background-color: white;
+    }
+
+    .student-avatar {
+        width: 60px;
+        height: 60px;
+        background-color: #e0e0e0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        color: #666;
+    }
+
+    .student-details h4 {
+        margin: 0;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .student-details p {
+        margin: 2px 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .nav-tabs .nav-link {
+        color: #666;
+        border: none;
+        padding: 12px 24px;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--maroon);
+        border-bottom: 3px solid var(--maroon);
+        font-weight: 600;
+    }
+
+    .nav-tabs .nav-link i {
+        margin-right: 8px;
+    }
+
+    .tab-content {
+        padding: 20px;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .fee-summary-card {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .print-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1060;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .modal-body, .modal-body * {
+            visibility: visible;
+        }
+        .modal {
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin: 0;
+            padding: 0;
+        }
+        .print-btn, .btn {
+            display: none !important;
+        }
+        .nav-tabs {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .modal-xl {
+            max-width: 95%;
+        }
+    }
+
+    .bg-maroon {
+        background-color: var(--maroon);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(128, 0, 0, 0.05);
+        cursor: pointer;
+    }
+
+    /* Leaderboard Styles from Admin */
+    #leaderboardTable thead {
+        background: linear-gradient(135deg, #800000 0%, #a52a2a 100%) !important;
+    }
+    
+    #leaderboardTable thead th {
+        background: linear-gradient(135deg, #800000 0%, #a52a2a 100%) !important;
+        color: white !important;
+        border-color: #800000 !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 10px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        border: none;
+    }
+    
+    #leaderboardTable tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    #leaderboardTable tbody tr:hover {
+        background-color: #fff5f5;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    #leaderboardTable tbody td {
+        padding: 12px 10px;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+    
+    #leaderboardTable tbody td:first-child {
+        font-weight: 600;
+        color: #800000;
+        font-size: 1rem;
+    }
+    
+    /* Table wrapper improvements */
+    #leaderboards-content .table-responsive {
+        border-radius: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        background: white;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #leaderboardTable {
+        width: 100%;
+        margin-bottom: 0;
+    }
+    
+    .gwa-display {
+        font-size: 1rem;
+        font-weight: normal;
+        color: var(--maroon);
+    }
+
+    .honor-badge {
+        display: inline-block;
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+    }
+    
+    .honor-badge:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+
+    .university-scholar {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: #000;
+    }
+
+    .college-scholar {
+        background: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 100%);
+        color: #000;
+    }
+
+    .deans-lister {
+        background: linear-gradient(135deg, #800000 0%, #a52a2a 100%);
+        color: #fff;
+    }
+
+    .filter-section {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .filter-section .form-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-section .form-label i {
+        color: #800000;
+        font-size: 0.85rem;
+    }
+    
+    .filter-section .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 0.625rem 0.875rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-section .form-select:focus {
+        border-color: #800000;
+        box-shadow: 0 0 0 0.2rem rgba(128, 0, 0, 0.15);
+    }
+    
+    /* Search bar improvements */
+    #leaderboards-content .form-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    #leaderboards-content .form-label i {
+        color: #800000;
+        font-size: 0.85rem;
+        margin-right: 0.3rem;
+    }
+    
+    #leaderboards-content #leaderboardSearch {
+        border: 1px solid #dee2e6;
+        padding: 0.625rem 0.875rem;
+        font-size: 0.95rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    #leaderboards-content #leaderboardSearch:focus {
+        border-color: #800000;
+        box-shadow: 0 0 0 0.2rem rgba(128, 0, 0, 0.15);
+        outline: none;
+    }
+
+    /* Desktop enhancements for leaderboard */
+    @media (min-width: 992px) {
+        #leaderboards-content .card {
+            padding: 10px;
+        }
+        
+        #leaderboards-content .section-title {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        #leaderboardTable {
+            min-width: 100%;
+        }
+        
+        #leaderboardTable tbody td {
+            padding: 14px 12px;
+            font-size: 0.95rem;
+        }
+        
+        #leaderboardTable thead th {
+            padding: 14px 12px;
+            font-size: 0.9rem;
+        }
+        
+        /* Hide scroll hint on desktop */
+        #leaderboards-content .table-responsive::after {
+            display: none;
+        }
+        
+        /* Desktop: Restore full badge styling */
+        #leaderboardTable .honor-badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem !important;
+            border-radius: 20px;
+            font-size: 0.8rem !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
+        
+        #leaderboardTable .honor-badge.university-scholar {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+            color: #000 !important;
+        }
+        
+        #leaderboardTable .honor-badge.college-scholar {
+            background: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 100%) !important;
+            color: #000 !important;
+        }
+        
+        #leaderboardTable .honor-badge.deans-lister {
+            background: linear-gradient(135deg, #800000 0%, #a52a2a 100%) !important;
+            color: #fff !important;
+        }
+        
+        .filter-section {
+            padding: 25px;
+        }
+        
+        .filter-section .form-label {
+            font-size: 0.95rem;
+        }
+        
+        .filter-section .form-select {
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        #leaderboards-content .form-label {
+            font-size: 0.95rem;
+        }
+        
+        #leaderboards-content #leaderboardSearch {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        /* Leaderboard table mobile adjustments */
+        #leaderboardTable {
+            font-size: 0.7rem;
+            min-width: 500px;
+        }
+        
+        #leaderboardTable thead th {
+            font-size: 0.6rem;
+            padding: 6px 2px;
+            letter-spacing: 0.2px;
+        }
+        
+        #leaderboardTable tbody td {
+            font-size: 0.7rem;
+            padding: 6px 2px;
+            white-space: nowrap;
+        }
+        
+        #leaderboardTable tbody td:first-child {
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        /* Optimize column widths for mobile */
+        #leaderboardTable tbody td:first-child,
+        #leaderboardTable thead th:first-child {
+            width: 35px;
+            max-width: 35px;
+            padding: 6px 1px;
+        }
+        
+        /* Make Academic Scholar column take more space and require scroll */
+        #leaderboardTable tbody td:last-child,
+        #leaderboardTable thead th:last-child {
+            min-width: 120px;
+        }
+        
+        /* Mobile: Keep badge styling like desktop but smaller */
+        #leaderboardTable .honor-badge {
+            font-size: 0.6rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        
+        #leaderboardTable .honor-badge.university-scholar {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+        }
+        
+        #leaderboardTable .honor-badge.college-scholar {
+            background: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 100%);
+            color: #000;
+        }
+        
+        #leaderboardTable .honor-badge.deans-lister {
+            background: linear-gradient(135deg, #800000 0%, #a52a2a 100%);
+            color: #fff;
+        }
+        
+        /* Filter section mobile adjustments */
+        .filter-section {
+            padding: 15px;
+        }
+        
+        .filter-section .form-label {
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        .filter-section .form-label i {
+            font-size: 0.8rem;
+        }
+        
+        .filter-section .form-select {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        /* Leaderboard search bar mobile adjustments */
+        #leaderboards-content .form-label {
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        #leaderboards-content .form-label i {
+            font-size: 0.8rem;
+        }
+        
+        #leaderboards-content #leaderboardSearch {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        #leaderboards-content .section-title {
+            font-size: 1.4rem;
+        }
+    }
+
+    </style>
+</head>
+<body>
+    <!-- Teacher Classes Modal -->
+    <div class="modal fade" id="teacherClassesModal" tabindex="-1" aria-labelledby="teacherClassesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-maroon text-white">
+                    <h5 class="modal-title" id="teacherClassesModalLabel">Classes Handled</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Class Code</th>
+                                    <th>Subject</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacherClassesTableBody">
+                                <!-- Classes will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Students Modal -->
+    <div class="modal fade" id="classStudentsModal" tabindex="-1" aria-labelledby="classStudentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-maroon text-white">
+                    <h5 class="modal-title" id="classStudentsModalLabel">Class Students</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Section Filter -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="sectionFilter" class="form-label">Select Section:</label>
+                            <select class="form-select" id="sectionFilter" onchange="switchSection()">
+                                <!-- Sections will be populated here -->
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                <span id="sectionInfo">Select a section to view students</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Midterm Grade</th>
+                                    <th>Final Grade</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="classStudentsTableBody">
+                                <!-- Students will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Archive Teacher Modal -->
+    <div class="modal fade" id="archiveTeacherModal" tabindex="-1" aria-labelledby="archiveTeacherModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-maroon text-white">
+                    <h5 class="modal-title" id="archiveTeacherModalLabel"><i class="bi bi-archive me-2"></i>Archive Teacher</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to archive <strong id="archiveTeacherName"></strong>?
+                    <div class="alert alert-info mt-2">
+                        <small><i class="bi bi-info-circle"></i> Archived teachers can be viewed in the archive list.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-maroon" id="confirmArchiveBtn"><i class="bi bi-archive"></i> Archive Teacher</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Announcement Modal -->
+    <div class="modal fade" id="createAnnouncementModal" tabindex="-1" aria-labelledby="createAnnouncementModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-maroon text-white">
+                    <h5 class="modal-title" id="createAnnouncementModalLabel"><i class="fas fa-bullhorn me-2"></i>Create New Announcement</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="announcementForm">
+                        <div class="mb-3">
+                            <label for="announcementTitle" class="form-label">Announcement Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="announcementTitle" placeholder="Enter announcement title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="announcementContent" class="form-label">Content <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="announcementContent" rows="5" placeholder="Enter announcement content" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="announcementCategory" class="form-label">Category</label>
+                            <select class="form-select" id="announcementCategory">
+                                <option value="General">General</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Event">Event</option>
+                                <option value="Holiday">Holiday</option>
+                                <option value="Important">Important</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-maroon" id="publishAnnouncementBtn"><i class="fas fa-paper-plane me-1"></i>Publish Announcement</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Information Modal -->
+    <div class="modal fade" id="studentInfoModal" tabindex="-1" aria-labelledby="studentInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-maroon text-white">
+                    <h5 class="modal-title" id="studentInfoModalLabel">Student Information</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <!-- Student Header -->
+                    <div class="student-info-header">
+                        <div class="student-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="student-details">
+                            <h4 id="modalStudentName">Dummy Student</h4>
+                            <p><strong>Student ID:</strong> <span id="modalStudentId">2022-001</span></p>
+                            <p><strong>Department:</strong> <span id="modalStudentDept">BSCS</span></p>
+                            <p><strong>Year Level:</strong> <span id="modalStudentYear">4th Year</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs px-3" id="studentInfoTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="grades-tab" data-bs-toggle="tab" data-bs-target="#grades-panel" type="button" role="tab">
+                                <i class="fas fa-chart-line"></i> Grades
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="balance-tab" data-bs-toggle="tab" data-bs-target="#balance-panel" type="button" role="tab">
+                                <i class="fas fa-credit-card"></i> Balance
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="registration-tab" data-bs-toggle="tab" data-bs-target="#registration-panel" type="button" role="tab">
+                                <i class="fas fa-file-alt"></i> Registration Form
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="studentInfoTabContent">
+                        <!-- Grades Panel -->
+                        <div class="tab-pane fade show active" id="grades-panel" role="tabpanel">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Filter by Year</label>
+                                    <select class="form-select" id="gradeYearFilter">
+                                        <option value="2024-2025">2024 - 2025</option>
+                                        <option value="2023-2024">2023 - 2024</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Filter by Semester</label>
+                                    <select class="form-select" id="gradeSemesterFilter">
+                                        <option value="1ST SEMESTER">1ST SEMESTER</option>
+                                        <option value="2ND SEMESTER">2ND SEMESTER</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button class="btn btn-secondary w-100" id="resetGradeFilters">Reset Filter</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Subject Code</th>
+                                            <th>Subject</th>
+                                            <th>Midterm Grade</th>
+                                            <th>Final Grade</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-danger">PCS112</td>
+                                            <td>Programming Lang.</td>
+                                            <td>99</td>
+                                            <td>99</td>
+                                            <td>Passed</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-danger">SCS101</td>
+                                            <td>Software Testing</td>
+                                            <td>99</td>
+                                            <td>99</td>
+                                            <td>Passed</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-danger">PCS115</td>
+                                            <td>CS Thesis Writing</td>
+                                            <td>99</td>
+                                            <td>99</td>
+                                            <td>Passed</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-danger">PCS110</td>
+                                            <td>Software Eng.</td>
+                                            <td>99</td>
+                                            <td>99</td>
+                                            <td>Passed</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-danger">PCS114</td>
+                                            <td>Research Methods</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>Incomplete</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Balance Panel -->
+                        <div class="tab-pane fade" id="balance-panel" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="fee-summary-card">
+                                        <h5 class="mb-3">Payment Summary</h5>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Total Assessment:</span>
+                                            <span>₱45,000.00</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Amount Paid:</span>
+                                            <span>₱25,000.00</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span><strong>Balance:</strong></span>
+                                            <span class="text-danger"><strong>₱20,000.00</strong></span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Due Date:</span>
+                                            <span>June 15, 2025</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="fee-summary-card">
+                                        <h5 class="mb-3">Payment History</h5>
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Amount</th>
+                                                    <th>OR Number</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Jan 15, 2025</td>
+                                                    <td>₱15,000.00</td>
+                                                    <td>2025-001234</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nov 20, 2024</td>
+                                                    <td>₱10,000.00</td>
+                                                    <td>2024-009876</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="mb-3">Detailed Fee Breakdown</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Fee Description</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Tuition Fee (32 units @ ₱1,000/unit)</td>
+                                            <td>₱32,000.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Registration Fee</td>
+                                            <td>₱2,500.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Library Fee</td>
+                                            <td>₱1,200.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Laboratory Fee</td>
+                                            <td>₱3,500.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Medical/Dental Fee</td>
+                                            <td>₱1,800.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Student Activity Fee</td>
+                                            <td>₱1,500.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Computer Fee</td>
+                                            <td>₱2,500.00</td>
+                                        </tr>
+                                        <tr class="table-secondary">
+                                            <td><strong>Total Fees</strong></td>
+                                            <td><strong>₱45,000.00</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Registration Form Panel -->
+                        <div class="tab-pane fade" id="registration-panel" role="tabpanel">
+                            <div style="background: white; padding: 30px;">
+                                <div class="text-center mb-4">
+                                    <h5 class="mb-0">MANUEL S. ENVERGA UNIVERSITY FOUNDATION</h5>
+                                    <small>Candelaria, Quezon | Tel: (042) 710-3188</small>
+                                    <h6 class="mt-3 fw-bold">STUDENT REGISTRATION FORM</h6>
+                                </div>
+
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">Personal Information</h6>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr><td><strong>Full Name:</strong></td><td>Juan Torres Dela Cruz</td></tr>
+                                        <tr><td><strong>Date of Birth:</strong></td><td>October 24, 2004</td></tr>
+                                        <tr><td><strong>Sex:</strong></td><td>Male</td></tr>
+                                        <tr><td><strong>Contact No.:</strong></td><td>0991 770 0123</td></tr>
+                                        <tr><td><strong>Email:</strong></td><td>juandirection@gmail.com</td></tr>
+                                    </tbody>
+                                </table>
+
+                                <h6 class="fw-bold border-bottom pb-2 mb-3 mt-4">Enrollment Information</h6>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr><td><strong>Course:</strong></td><td>Bachelor of Science in Computer Science</td></tr>
+                                        <tr><td><strong>Year Level:</strong></td><td>4th Year</td></tr>
+                                        <tr><td><strong>Semester:</strong></td><td>First Semester AY 2024-2025</td></tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Print PDF Button -->
+                                <div class="text-end mt-4">
+                                    <button class="btn btn-maroon" onclick="printModalContent()">
+                                        <i class="fas fa-print"></i> Print PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="header-content">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="header-title">Enverga University Candelaria</h1>
+        </div>
+    </div>
+
+    <!-- Mobile Toggle Button -->
+    <button class="btn btn-dark toggle-btn d-md-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+    <img src="photo/mseuflogo.png" alt="MSEUF Candelaria Logo" class="sidebar-logo">
+    <div class="university-name">MANUEL S. ENVERGA UNIVERSITY FOUNDATION CANDELARIA INC.</div>
+    <hr />
+    <a href="#" data-target="dashboard-content" class="nav-link active"><i class="fas fa-tachometer-alt mr-2"></i> Dashboard</a>
+    <a href="#" data-target="students-content" class="nav-link"><i class="fas fa-users mr-2"></i> Students</a>
+    <a href="#" data-target="teachers" class="nav-link"><i class="fas fa-chalkboard-teacher mr-2"></i> Teachers</a>
+    <a href="#" data-target="announcements-content" class="nav-link"><i class="fas fa-bullhorn mr-2"></i> Announcements</a>
+    <a href="#" data-target="leaderboards-content" class="nav-link"><i class="fas fa-trophy mr-2"></i> Leaderboards</a>
+    <a href="#" onclick="logout();"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+</nav>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Dashboard Content (Active by default) -->
+        <div id="dashboard-content" class="content-section active">
+            <h2 class="mb-4 dashboard-title"><i class="fas fa-tachometer-alt text-dark"></i> Admin Dashboard</h2>
+
+            <!-- Admin Profile Card -->
+            <div class="dashboard-card">
+                <div class="d-flex align-items-center">
+                    <div class="me-4">
+                        <i class="fas fa-user-circle fa-5x text-secondary"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1 fw-bold">ADMINISTRATOR</h5>
+                        <p class="mb-1">Admin ID: AXX-0001</p>
+                        <p class="mb-0">Position: Admin</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card h-100 text-center stat-card">
+                        <div class="card-body">
+                            <i class="fas fa-user-graduate fa-2x text-maroon mb-2"></i>
+                            <h6 class="fw-bold text-maroon">Students</h6>
+                            <h2 class="text-dark">1840</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card h-100 text-center stat-card">
+                        <div class="card-body">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-maroon mb-2"></i>
+                            <h6 class="fw-bold text-maroon">Teachers</h6>
+                            <h2 class="text-dark">197</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card h-100 text-center stat-card">
+                        <div class="card-body">
+                            <i class="fas fa-bullhorn fa-2x text-maroon mb-2"></i>
+                            <h6 class="fw-bold text-maroon">Announcements</h6>
+                            <h2 class="text-dark">12</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card h-100 text-center stat-card">
+                        <div class="card-body">
+                            <i class="fas fa-clipboard-check fa-2x text-maroon mb-2"></i>
+                            <h6 class="fw-bold text-maroon">Enable Encoding</h6>
+                            <div class="form-check form-switch d-flex justify-content-center">
+    <input class="form-check-input" type="checkbox" id="encodingSwitch" checked style="transform: scale(1.3);">
+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers Management Content -->
+        <div id="teachers" class="content-section">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-3"><i class="bi bi-person-video3"></i> Teachers Management</h2>
+
+<div class="mb-3">
+    <div class="input-group w-100">
+        <input type="text" class="form-control" id="teacherSearch" placeholder="Search teachers...">
+        <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
+    </div>
+</div>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+    <!-- <button class="btn btn-maroon"><i class="bi bi-plus"></i> Add New Teacher</button> -->
+    
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="enableEncodingToggle">
+        <label class="form-check-label" for="enableEncodingToggle">Enable Grade Encoding</label>
+    </div>
+</div>
+
+                    <!-- Teacher Filter Section -->
+                    <div class="filter-section mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="departmentFilter" class="form-label">Filter by Department/Status</label>
+                                <select class="form-select" id="departmentFilter">
+                                    <option value="">All Active Teachers</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="English Literature">English Literature</option>
+                                    <option value="Physics">Physics</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                    <option value="archived">Archived Teachers</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <button class="btn btn-secondary w-100" id="resetTeacherFilters">Reset Filters</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="teachersTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Contact</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-teacher-id="T001">
+                                    <td>T001</td>
+                                    <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T001', 'Dr. Sarah Johnson')">Dr. Sarah Johnson</a></td>
+                                    <td>Mathematics</td>
+                                    <td>sarah.johnson@school.edu</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                    </td>
+                                </tr>
+                                <tr data-teacher-id="T002">
+                                    <td>T002</td>
+                                    <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T002', 'Prof. Michael Chen')">Prof. Michael Chen</a></td>
+                                    <td>Computer Science</td>
+                                    <td>michael.chen@school.edu</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                    </td>
+                                </tr>
+                                <tr data-teacher-id="T003">
+                                    <td>T003</td>
+                                    <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T003', 'Ms. Emily Rodriguez')">Ms. Emily Rodriguez</a></td>
+                                    <td>English Literature</td>
+                                    <td>emily.rodriguez@school.edu</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                    </td>
+                                </tr>
+                                <tr data-teacher-id="T004">
+                                    <td>T004</td>
+                                    <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T004', 'Dr. Robert Wilson')">Dr. Robert Wilson</a></td>
+                                    <td>Physics</td>
+                                    <td>robert.wilson@school.edu</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                    </td>
+                                </tr>
+                                <tr data-teacher-id="T005">
+                                    <td>T005</td>
+                                    <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T005', 'Ms. Lisa Thompson')">Ms. Lisa Thompson</a></td>
+                                    <td>Chemistry</td>
+                                    <td>lisa.thompson@school.edu</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Management Content -->
+        <div id="students-content" class="content-section">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-3"><i class="fas fa-user-graduate"></i> Student Management</h2>
+
+                    <!-- Search Bar -->
+                    <div class="mb-3">
+                        <div class="input-group w-100">
+                            <input type="text" class="form-control" id="studentSearch" placeholder="Search students...">
+                            <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Student Filter Section -->
+                    <div class="filter-section mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="studentDepartmentFilter" class="form-label">Filter by Department</label>
+                                <select class="form-select" id="studentDepartmentFilter">
+                                    <option value="">All Departments</option>
+                                    <option value="BSCS">BSCS</option>
+                                    <option value="BSIT">BSIT</option>
+                                    <option value="BSN">BSN</option>
+                                    <option value="BSED">BSED</option>
+                                    <option value="BSBA">BSBA</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="studentYearFilter" class="form-label">Filter by Year</label>
+                                <select class="form-select" id="studentYearFilter">
+                                    <option value="">All Years</option>
+                                    <option value="1st Year">1st Year</option>
+                                    <option value="2nd Year">2nd Year</option>
+                                    <option value="3rd Year">3rd Year</option>
+                                    <option value="4th Year">4th Year</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button class="btn btn-secondary w-100" id="resetStudentFilters">Reset Filters</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="studentsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Year</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="clickable-row" onclick="viewStudentInfo(this)" style="cursor: pointer;" data-student-id="A22-0001" data-name="Dummy Student" data-dept="BSCS" data-year="4th Year">
+                                    <td><span class="student-id">A22-0001</span></td>
+                                    <td>Dummy Student</td>
+                                    <td>BSCS</td>
+                                    <td><span class="badge badge-year">4th Year</span></td>
+                                </tr>
+                                <tr class="clickable-row" onclick="viewStudentInfo(this)" style="cursor: pointer;" data-student-id="A22-0002" data-name="Blue Kirby" data-dept="BSCS" data-year="4th Year">
+                                    <td><span class="student-id">A22-0002</span></td>
+                                    <td>Blue Kirby</td>
+                                    <td>BSCS</td>
+                                    <td><span class="badge badge-year">4th Year</span></td>
+                                </tr>
+                                <tr class="clickable-row" onclick="viewStudentInfo(this)" style="cursor: pointer;" data-student-id="A22-0003" data-name="Maria Santos" data-dept="BSN" data-year="2nd Year">
+                                    <td><span class="student-id">A22-0003</span></td>
+                                    <td>Maria Santos</td>
+                                    <td>BSN</td>
+                                    <td><span class="badge badge-year">2nd Year</span></td>
+                                </tr>
+                                <tr class="clickable-row" onclick="viewStudentInfo(this)" style="cursor: pointer;" data-student-id="A22-0004" data-name="John Dela Cruz" data-dept="BSIT" data-year="3rd Year">
+                                    <td><span class="student-id">A22-0004</span></td>
+                                    <td>John Dela Cruz</td>
+                                    <td>BSIT</td>
+                                    <td><span class="badge badge-year">3rd Year</span></td>
+                                </tr>
+                                <tr class="clickable-row" onclick="viewStudentInfo(this)" style="cursor: pointer;" data-student-id="A22-0005" data-name="Anna Reyes" data-dept="BSED" data-year="1st Year">
+                                    <td><span class="student-id">A22-0005</span></td>
+                                    <td>Anna Reyes</td>
+                                    <td>BSED</td>
+                                    <td><span class="badge badge-year">1st Year</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements Content -->
+        <div id="announcements-content" class="content-section">
+            <div class="card">
+                <div class="card-body">
+                     <h2 class="mb-3"><i class="fas fa-bullhorn"></i> Announcements</h2>
+                  <div class="list-group mb-3">
+                    <div class="list-group-item">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Academic Excellence Awards</h5>
+                        <small class="text-muted">2 days ago</small>
+                      </div>
+                      <p class="mb-1">Congratulations to all students who achieved academic excellence this semester!</p>
+                      <div class="btn-group mt-2">
+                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                      </div>
+                    </div>
+
+                    <div class="list-group-item">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Holiday Notice</h5>
+                        <small class="text-muted">1 week ago</small>
+                      </div>
+                      <p class="mb-1">The school will be closed from December 24 to January 2 for winter break.</p>
+                      <div class="btn-group mt-2">
+                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Responsive Button Placement -->
+                  <div class="text-end">
+                    <button class="btn btn-maroon" id="createAnnouncementBtn">
+                      <i class="fas fa-plus"></i> Create New Announcement
+                    </button>
+                  </div>
+                </div>
+              </div>
+        </div>
+        
+        <!-- Leaderboards Content -->
+        <div id="leaderboards-content" class="content-section">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4 section-title">
+                        <i class="fas fa-trophy text-dark"></i> Academic Leaderboards
+                    </h2>
+
+                    <!-- Search Bar -->
+                    <div class="mb-4">
+                        <label for="leaderboardSearch" class="form-label">
+                            <i class="fas fa-search"></i> Search
+                        </label>
+                        <input type="text" class="form-control" id="leaderboardSearch" placeholder="Search by Student ID or Name...">
+                    </div>
+
+                    <!-- Filter Section -->
+                    <div class="filter-section mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-4 col-12">
+                                <label for="academicYearFilter" class="form-label">
+                                    <i class="fas fa-calendar-alt me-1"></i> Academic Year
+                                </label>
+                                <select class="form-select" id="academicYearFilter" onchange="filterLeaderboard()">
+                                    <option value="2024-2025">2024 - 2025</option>
+                                    <option value="2023-2024">2023 - 2024</option>
+                                    <option value="2022-2023">2022 - 2023</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <label for="honorFilter" class="form-label">
+                                    <i class="fas fa-award me-1"></i> Filter by Scholar Type
+                                </label>
+                                <select class="form-select" id="honorFilter" onchange="filterLeaderboard()">
+                                    <option value="">All Scholars</option>
+                                    <option value="University Scholar">University Scholar (1.00 - 1.45)</option>
+                                    <option value="College Scholar">College Scholar (1.46 - 1.75)</option>
+                                    <option value="Dean's Lister">Dean's Lister (1.76 - 1.99)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <label for="departmentFilterLeaderboard" class="form-label">
+                                    <i class="fas fa-building me-1"></i> Filter by Department
+                                </label>
+                                <select class="form-select" id="departmentFilterLeaderboard" onchange="filterLeaderboard()">
+                                    <option value="">All Departments</option>
+                                    <option value="BSCS">BSCS</option>
+                                    <option value="BSIT">BSIT</option>
+                                    <option value="BSN">BSN</option>
+                                    <option value="BSED">BSED</option>
+                                    <option value="BSBA">BSBA</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Leaderboard Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="leaderboardTable">
+                            <thead class="bg-maroon text-white">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Year Level</th>
+                                    <th>GWA</th>
+                                    <th>Academic Scholar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-honor="University Scholar" data-dept="BSIT" data-year="2024-2025">
+                                    <td>1</td>
+                                    <td>A25-0001</td>
+                                    <td>Juan Carlos Reyes</td>
+                                    <td>BSIT</td>
+                                    <td>4th Year</td>
+                                    <td>1.00</td>
+                                    <td><span class="honor-badge university-scholar">University Scholar</span></td>
+                                </tr>
+                                <tr data-honor="University Scholar" data-dept="BSCS" data-year="2024-2025">
+                                    <td>2</td>
+                                    <td>A25-0015</td>
+                                    <td>Maria Clara Santos</td>
+                                    <td>BSCS</td>
+                                    <td>4th Year</td>
+                                    <td>1.15</td>
+                                    <td><span class="honor-badge university-scholar">University Scholar</span></td>
+                                </tr>
+                                <tr data-honor="University Scholar" data-dept="BSN" data-year="2024-2025">
+                                    <td>3</td>
+                                    <td>A25-0032</td>
+                                    <td>Ana Marie Cruz</td>
+                                    <td>BSN</td>
+                                    <td>4th Year</td>
+                                    <td>1.18</td>
+                                    <td><span class="honor-badge university-scholar">University Scholar</span></td>
+                                </tr>
+                                <tr data-honor="University Scholar" data-dept="BSED" data-year="2024-2025">
+                                    <td>4</td>
+                                    <td>A25-0045</td>
+                                    <td>Robert Mendoza</td>
+                                    <td>BSED</td>
+                                    <td>4th Year</td>
+                                    <td>1.25</td>
+                                    <td><span class="honor-badge university-scholar">University Scholar</span></td>
+                                </tr>
+                                <tr data-honor="University Scholar" data-dept="BSBA" data-year="2024-2025">
+                                    <td>5</td>
+                                    <td>A25-0058</td>
+                                    <td>Sofia Rodriguez</td>
+                                    <td>BSBA</td>
+                                    <td>4th Year</td>
+                                    <td>1.32</td>
+                                    <td><span class="honor-badge university-scholar">University Scholar</span></td>
+                                </tr>
+                                <tr data-honor="University Scholar" data-dept="BSCS" data-year="2024-2025">
+                                    <td>6</td>
+                                    <td>A25-0067</td>
+                                    <td>Michael Tan</td>
+                                    <td>BSCS</td>
+                                    <td>4th Year</td>
+                                    <td>1.40</td>
+                                    <td><span class="honor-badge university-scholar">University Scholar</span></td>
+                                </tr>
+                                <tr data-honor="College Scholar" data-dept="BSIT" data-year="2024-2025">
+                                    <td>7</td>
+                                    <td>A25-0078</td>
+                                    <td>Catherine Lim</td>
+                                    <td>BSIT</td>
+                                    <td>4th Year</td>
+                                    <td>1.50</td>
+                                    <td><span class="honor-badge college-scholar">College Scholar</span></td>
+                                </tr>
+                                <tr data-honor="College Scholar" data-dept="BSN" data-year="2024-2025">
+                                    <td>8</td>
+                                    <td>A25-0089</td>
+                                    <td>Daniel Garcia</td>
+                                    <td>BSN</td>
+                                    <td>4th Year</td>
+                                    <td>1.60</td>
+                                    <td><span class="honor-badge college-scholar">College Scholar</span></td>
+                                </tr>
+                                <tr data-honor="College Scholar" data-dept="BSED" data-year="2024-2025">
+                                    <td>9</td>
+                                    <td>A25-0095</td>
+                                    <td>Isabel Fernandez</td>
+                                    <td>BSED</td>
+                                    <td>4th Year</td>
+                                    <td>1.70</td>
+                                    <td><span class="honor-badge college-scholar">College Scholar</span></td>
+                                </tr>
+                                <tr data-honor="Dean's Lister" data-dept="BSBA" data-year="2024-2025">
+                                    <td>10</td>
+                                    <td>A25-0102</td>
+                                    <td>Patrick Villa</td>
+                                    <td>BSBA</td>
+                                    <td>4th Year</td>
+                                    <td>1.80</td>
+                                    <td><span class="honor-badge deans-lister">Dean's Lister</span></td>
+                                </tr>
+                                <tr data-honor="Dean's Lister" data-dept="BSCS" data-year="2024-2025">
+                                    <td>11</td>
+                                    <td>A25-0115</td>
+                                    <td>Michelle Torres</td>
+                                    <td>BSCS</td>
+                                    <td>4th Year</td>
+                                    <td>1.85</td>
+                                    <td><span class="honor-badge deans-lister">Dean's Lister</span></td>
+                                </tr>
+                                <tr data-honor="Dean's Lister" data-dept="BSIT" data-year="2024-2025">
+                                    <td>12</td>
+                                    <td>A25-0128</td>
+                                    <td>Joshua Ramos</td>
+                                    <td>BSIT</td>
+                                    <td>4th Year</td>
+                                    <td>1.90</td>
+                                    <td><span class="honor-badge deans-lister">Dean's Lister</span></td>
+                                </tr>
+                                <tr data-honor="Dean's Lister" data-dept="BSN" data-year="2024-2025">
+                                    <td>13</td>
+                                    <td>A25-0134</td>
+                                    <td>Angela Morales</td>
+                                    <td>BSN</td>
+                                    <td>4th Year</td>
+                                    <td>1.95</td>
+                                    <td><span class="honor-badge deans-lister">Dean's Lister</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+    </div>
+</div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        $(document).on('click', function(e) {
+            if ($(window).width() <= 768) {
+                if (!$(e.target).closest('#sidebar').length && 
+                    !$(e.target).closest('.toggle-btn').length &&
+                    !$(e.target).closest('.menu-toggle').length &&
+                    !$(e.target).closest('.mobile-header').length) {
+                    $('#sidebar').removeClass('active');
+                }
+            }
+        });
+
+        // Navigation
+        $('.nav-link').on('click', function(e) {
+            e.preventDefault();
+            const target = $(this).data('target');
+            
+            // Hide all content sections 
+            $('.content-section').removeClass('active');
+            
+            // Show the selected content section
+            $(`#${target}`).addClass('active');
+            
+            // Update active state for nav links
+            $('.nav-link').removeClass('active');
+            $(this).addClass('active');
+        });
+
+        // Set initial active states on page load
+        $(document).ready(function() {
+            // Show Dashboard content by default
+            $('.content-section').removeClass('active');
+            $('#dashboard-content').addClass('active');
+            
+            // Highlight Teachers nav link by default
+            $('.nav-link').removeClass('active');
+            $('.nav-link[data-target="dashboard-content"]').addClass('active');
+        });
+
+        // Filtering and Search Functionality
+        const departmentFilter = document.getElementById('departmentFilter');
+        const teacherSearch = document.getElementById('teacherSearch');
+        const resetFilters = document.getElementById('resetTeacherFilters');
+        const teachersTable = document.getElementById('teachersTable').getElementsByTagName('tbody')[0];
+
+        // Helper function to filter teachers
+        function filterTeachers() {
+            const selectedDepartment = departmentFilter.value.toLowerCase();
+            const searchQuery = teacherSearch.value.toLowerCase();
+
+            Array.from(teachersTable.rows).forEach(row => {
+                const id = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                const department = row.cells[2].textContent.toLowerCase();
+
+                const matchesDepartment = !selectedDepartment || department === selectedDepartment;
+                const matchesSearch = !searchQuery || id.includes(searchQuery) || name.includes(searchQuery);
+
+                row.style.display = matchesDepartment && matchesSearch ? '' : 'none';
+            });
+        }
+
+        departmentFilter.addEventListener('change', filterTeachers);
+        teacherSearch.addEventListener('input', filterTeachers);
+        resetFilters.addEventListener('click', () => {
+            departmentFilter.value = '';
+            teacherSearch.value = '';
+            filterTeachers();
+        });
+
+        // Archive functionality
+        let archivedTeachers = [];
+
+        // Archive button event listeners
+        teachersTable.querySelectorAll('button.btn-maroon').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const row = this.closest('tr');
+                const teacherId = row.getAttribute('data-teacher-id');
+                const name = row.cells[1].textContent;
+                
+                document.getElementById('archiveTeacherName').textContent = name;
+                
+                const confirmBtn = document.getElementById('confirmArchiveBtn');
+                confirmBtn.onclick = function() {
+                    archiveTeacher(teacherId, row);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('archiveTeacherModal'));
+                    modal.hide();
+                };
+                
+                const modal = new bootstrap.Modal(document.getElementById('archiveTeacherModal'));
+                modal.show();
+            });
+        });
+
+        // Archive teacher function
+        function archiveTeacher(teacherId, row) {
+            const teacherData = {
+                id: teacherId,
+                name: row.cells[1].textContent,
+                department: row.cells[2].textContent,
+                contact: row.cells[3].textContent,
+                archivedAt: new Date().toLocaleDateString()
+            };
+            
+            // Add to archived teachers array
+            archivedTeachers.push(teacherData);
+            
+            // Mark row as archived
+            row.setAttribute('data-archived', 'true');
+            row.style.display = 'none';
+            
+            // Show success message
+            showArchiveSuccess(teacherData.name);
+            
+            console.log('Teacher archived:', teacherData);
+        }
+
+        // Show archive success message
+        function showArchiveSuccess(teacherName) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show';
+            alert.innerHTML = `
+                <i class="bi bi-check-circle-fill"></i> 
+                <strong>${teacherName}</strong> has been archived successfully.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const teachersSection = document.getElementById('teachers');
+            teachersSection.insertBefore(alert, teachersSection.firstChild);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        // Updated filter function with archive support
+        function filterTeachers() {
+            const selectedFilter = departmentFilter.value;
+            const searchQuery = teacherSearch.value.toLowerCase();
+
+            Array.from(teachersTable.rows).forEach(row => {
+                const id = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                const department = row.cells[2].textContent.trim();
+                const isArchived = row.getAttribute('data-archived') === 'true';
+
+                const matchesSearch = !searchQuery || id.includes(searchQuery) || name.includes(searchQuery);
+                
+                // Filter logic
+                let shouldShow = false;
+                
+                if (selectedFilter === '') {
+                    // Show all active teachers (not archived)
+                    shouldShow = !isArchived && matchesSearch;
+                } else if (selectedFilter === 'archived') {
+                    // Show only archived teachers
+                    shouldShow = isArchived && matchesSearch;
+                } else {
+                    // Show by department (only active teachers)
+                    shouldShow = !isArchived && department === selectedFilter && matchesSearch;
+                }
+
+                row.style.display = shouldShow ? '' : 'none';
+            });
+        }
+
+        // Reset filters function
+        resetFilters.addEventListener('click', () => {
+            departmentFilter.value = '';
+            teacherSearch.value = '';
+            filterTeachers();
+        });
+
+        // Logout function
+        function logout() {
+            // Add your logout logic here
+            console.log('Logging out...');
+            // window.location.href = 'logout.php';
+        }
+
+        // Sample data for teacher classes and students
+        const teacherClasses = {
+            'T001': [
+                { code: 'MATH101', section: 'A', subject: 'Calculus I', schedule: 'MWF 9:00-10:00 AM', students: 25 },
+                { code: 'MATH101', section: 'B', subject: 'Calculus I', schedule: 'TTh 10:00-11:30 AM', students: 28 },
+                { code: 'MATH201', section: 'A', subject: 'Linear Algebra', schedule: 'TTh 2:00-3:30 PM', students: 18 },
+                { code: 'MATH301', section: 'A', subject: 'Advanced Calculus', schedule: 'MWF 11:00-12:00 PM', students: 15 }
+            ],
+            'T002': [
+                { code: 'CS101', section: 'A', subject: 'Programming Fundamentals', schedule: 'MWF 10:00-11:00 AM', students: 30 },
+                { code: 'CS101', section: 'B', subject: 'Programming Fundamentals', schedule: 'TTh 1:00-2:30 PM', students: 26 },
+                { code: 'CS201', section: 'A', subject: 'Data Structures', schedule: 'TTh 1:00-2:30 PM', students: 22 },
+                { code: 'CS301', section: 'A', subject: 'Database Systems', schedule: 'TTh 3:30-5:00 PM', students: 20 }
+            ],
+            'T003': [
+                { code: 'ENG101', section: 'A', subject: 'English Composition', schedule: 'MWF 8:00-9:00 AM', students: 28 },
+                { code: 'ENG101', section: 'B', subject: 'English Composition', schedule: 'TTh 11:00-12:30 PM', students: 24 },
+                { code: 'ENG201', section: 'A', subject: 'World Literature', schedule: 'TTh 10:00-11:30 AM', students: 24 }
+            ],
+            'T004': [
+                { code: 'PHYS101', section: 'A', subject: 'General Physics I', schedule: 'MWF 1:00-2:00 PM', students: 26 },
+                { code: 'PHYS101', section: 'B', subject: 'General Physics I', schedule: 'TTh 2:30-4:00 PM', students: 23 },
+                { code: 'PHYS201', section: 'A', subject: 'Electromagnetism', schedule: 'TTh 9:00-10:30 AM', students: 19 }
+            ],
+            'T005': [
+                { code: 'CHEM101', section: 'A', subject: 'General Chemistry', schedule: 'MWF 2:00-3:00 PM', students: 32 },
+                { code: 'CHEM101', section: 'B', subject: 'General Chemistry', schedule: 'TTh 3:00-4:30 PM', students: 29 },
+                { code: 'CHEM201', section: 'A', subject: 'Organic Chemistry', schedule: 'TTh 11:30-1:00 PM', students: 21 }
+            ]
+        };
+
+        const classStudents = {
+            'MATH101-A': [
+                { id: 'S001', name: 'Alice Johnson', midterm: 85, final: 88 },
+                { id: 'S002', name: 'Bob Smith', midterm: 78, final: 82 },
+                { id: 'S003', name: 'Carol Davis', midterm: 92, final: 94 },
+                { id: 'S004', name: 'David Wilson', midterm: 76, final: 79 },
+                { id: 'S005', name: 'Emma Brown', midterm: 89, final: 91 }
+            ],
+            'MATH101-B': [
+                { id: 'S021', name: 'Zoe Adams', midterm: 82, final: 86 },
+                { id: 'S022', name: 'Alex Turner', midterm: 79, final: 83 },
+                { id: 'S023', name: 'Nina Parker', midterm: 88, final: 90 },
+                { id: 'S024', name: 'Sam Rodriguez', midterm: 85, final: 87 },
+                { id: 'S025', name: 'Luna Martinez', midterm: 91, final: 93 }
+            ],
+            'CS101-A': [
+                { id: 'S006', name: 'Frank Miller', midterm: 83, final: 86 },
+                { id: 'S007', name: 'Grace Lee', midterm: 91, final: 93 },
+                { id: 'S008', name: 'Henry Taylor', midterm: 75, final: 78 },
+                { id: 'S009', name: 'Iris Chen', midterm: 88, final: 90 },
+                { id: 'S010', name: 'Jack Anderson', midterm: 82, final: 85 }
+            ],
+            'CS101-B': [
+                { id: 'S026', name: 'Oscar Kim', midterm: 86, final: 89 },
+                { id: 'S027', name: 'Bella Santos', midterm: 78, final: 81 },
+                { id: 'S028', name: 'Ryan Cooper', midterm: 84, final: 86 },
+                { id: 'S029', name: 'Mia Foster', midterm: 90, final: 92 },
+                { id: 'S030', name: 'Leo Brooks', midterm: 77, final: 80 }
+            ],
+            'ENG101-A': [
+                { id: 'S011', name: 'Kelly White', midterm: 87, final: 89 },
+                { id: 'S012', name: 'Luke Harris', midterm: 79, final: 81 },
+                { id: 'S013', name: 'Maya Patel', midterm: 94, final: 96 },
+                { id: 'S014', name: 'Noah Garcia', midterm: 81, final: 83 },
+                { id: 'S015', name: 'Olivia Martin', midterm: 86, final: 88 }
+            ],
+            'ENG101-B': [
+                { id: 'S031', name: 'Ethan Clark', midterm: 83, final: 85 },
+                { id: 'S032', name: 'Sophia Reed', midterm: 88, final: 91 },
+                { id: 'S033', name: 'Mason Ward', midterm: 75, final: 78 },
+                { id: 'S034', name: 'Ava Phillips', midterm: 92, final: 94 },
+                { id: 'S035', name: 'Logan Bell', midterm: 80, final: 82 }
+            ]
+        };
+
+        let currentTeacherClasses = [];
+        let currentClassCode = '';
+        let currentSubject = '';
+        let availableSections = [];
+
+        // Function to show teacher classes
+        function showTeacherClasses(teacherId, teacherName) {
+            document.getElementById('teacherClassesModalLabel').textContent = `${teacherName} - Classes`;
+            currentTeacherClasses = teacherClasses[teacherId] || [];
+            
+            // Group classes by code and subject to show unique combinations
+            const uniqueClasses = {};
+            currentTeacherClasses.forEach(cls => {
+                const key = `${cls.code}-${cls.subject}`;
+                if (!uniqueClasses[key]) {
+                    uniqueClasses[key] = {
+                        code: cls.code,
+                        subject: cls.subject,
+                        sections: []
+                    };
+                }
+                uniqueClasses[key].sections.push({
+                    section: cls.section,
+                    schedule: cls.schedule,
+                    students: cls.students
+                });
+            });
+            
+            displayUniqueClasses(Object.values(uniqueClasses));
+            const modal = new bootstrap.Modal(document.getElementById('teacherClassesModal'));
+            modal.show();
+        }
+
+        function displayUniqueClasses(uniqueClasses) {
+            const tbody = document.getElementById('teacherClassesTableBody');
+            
+            tbody.innerHTML = '';
+            uniqueClasses.forEach(cls => {
+                const totalStudents = cls.sections.reduce((sum, section) => sum + section.students, 0);
+                const sectionCount = cls.sections.length;
+                
+                const row = `
+                    <tr>
+                        <td><strong>${cls.code}</strong></td>
+                        <td>${cls.subject} <small class="text-muted">(${sectionCount} section${sectionCount > 1 ? 's' : ''})</small></td>
+                        <td>
+                            <button class="btn btn-sm btn-maroon" onclick="showStudentsByClass('${cls.code}', '${cls.subject}')">
+                                <i class="fas fa-eye me-1"></i>View Students
+                                <span class="badge badge-student-count ms-2">${totalStudents}</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function showStudentsByClass(classCode, subject) {
+            currentClassCode = classCode;
+            currentSubject = subject;
+            
+            // Find all sections for this class
+            availableSections = currentTeacherClasses.filter(cls => 
+                cls.code === classCode && cls.subject === subject
+            );
+            
+            // Update modal title
+            document.getElementById('classStudentsModalLabel').textContent = `${classCode} - ${subject} - Student Grades`;
+            
+            // Populate section dropdown
+            const sectionFilter = document.getElementById('sectionFilter');
+            sectionFilter.innerHTML = '<option value="">Select a section...</option>';
+            
+            availableSections.forEach(section => {
+                const option = document.createElement('option');
+                option.value = section.section;
+                option.textContent = `Section ${section.section} (${section.schedule}) - ${section.students} students`;
+                sectionFilter.appendChild(option);
+            });
+            
+            // Clear students table initially
+            document.getElementById('classStudentsTableBody').innerHTML = 
+                '<tr><td colspan="6" class="text-center text-muted">Please select a section to view students.</td></tr>';
+            
+            // Close teacher classes modal and open students modal
+            const teacherModal = bootstrap.Modal.getInstance(document.getElementById('teacherClassesModal'));
+            teacherModal.hide();
+            
+            const modal = new bootstrap.Modal(document.getElementById('classStudentsModal'));
+            modal.show();
+        }
+
+        function switchSection() {
+        const selectedSection = document.getElementById('sectionFilter').value;
+        
+        if (!selectedSection) {
+            document.getElementById('classStudentsTableBody').innerHTML = 
+                '<tr><td colspan="5" class="text-center text-muted">Please select a section to view students.</td></tr>';
+            document.getElementById('sectionInfo').textContent = 'Select a section to view students';
+            return;
+        }
+        
+        // Update section info
+        const sectionData = availableSections.find(s => s.section === selectedSection);
+        document.getElementById('sectionInfo').textContent = 
+            `Section ${selectedSection} - ${sectionData.schedule} (${sectionData.students} students)`;
+        
+        // Load students for selected section
+        const studentKey = `${currentClassCode}-${selectedSection}`;
+        const students = classStudents[studentKey] || [];
+        const tbody = document.getElementById('classStudentsTableBody');
+        
+        if (students.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No students found for this section.</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = '';
+        students.forEach((student) => {
+            const finalRating = calculateFinalRating(student.midterm, student.final);
+            const remarks = getRemarks(finalRating);
+            const remarksClass = remarks === 'Passed' ? 'text-success' : 'text-danger';
+            
+            const row = `
+                <tr>
+                    <td><strong>${student.id}</strong></td>
+                    <td>${student.name}</td>
+                    <td>
+                        <span class="grade-display">${student.midterm}</span>
+                    </td>
+                    <td>
+                        <span class="grade-display">${student.final}</span>
+                    </td>
+                    <td>
+                        <span class="${remarksClass}">${remarks}</span>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+        function calculateFinalRating(midterm, final) {
+            // 40% midterm, 60% final
+            return Math.round((midterm * 0.4) + (final * 0.6));
+        }
+
+        function getRemarks(finalRating) {
+            if (finalRating >= 75) return 'Passed';
+            return 'Failed';
+        }
+
+        // Enable/disable grade encoding for teachers table
+        document.getElementById('enableEncodingToggle').addEventListener('change', function() {
+            // This would control whether teachers can encode grades
+            const status = this.checked ? 'enabled' : 'disabled';
+            alert(`Grade encoding has been ${status} for all teachers`);
+        });
+
+        // Student Management Functionality
+        const studentDepartmentFilter = document.getElementById('studentDepartmentFilter');
+        const studentYearFilter = document.getElementById('studentYearFilter');
+        const studentSearch = document.getElementById('studentSearch');
+        const resetStudentFilters = document.getElementById('resetStudentFilters');
+        const studentsTable = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
+
+        function filterStudents() {
+            const selectedDepartment = studentDepartmentFilter.value;
+            const selectedYear = studentYearFilter.value;
+            const searchQuery = studentSearch.value.toLowerCase();
+
+            Array.from(studentsTable.rows).forEach(row => {
+                const id = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                const department = row.cells[2].textContent.trim();
+                const year = row.cells[3].textContent.trim();
+
+                const matchesDepartment = !selectedDepartment || department === selectedDepartment;
+                const matchesYear = !selectedYear || year === selectedYear;
+                const matchesSearch = !searchQuery || id.includes(searchQuery) || name.includes(searchQuery);
+
+                row.style.display = matchesDepartment && matchesYear && matchesSearch ? '' : 'none';
+            });
+        }
+
+        studentDepartmentFilter.addEventListener('change', filterStudents);
+        studentYearFilter.addEventListener('change', filterStudents);
+        studentSearch.addEventListener('input', filterStudents);
+        resetStudentFilters.addEventListener('click', () => {
+            studentDepartmentFilter.value = '';
+            studentYearFilter.value = '';
+            studentSearch.value = '';
+            filterStudents();
+        });
+
+        // View Student Information Function - Opens Modal
+        function viewStudentInfo(row) {
+            // If called from a button (old code), find the row
+            if (row.tagName !== 'TR') {
+                row = row.closest('tr');
+            }
+            const id = row.getAttribute('data-student-id');
+            const name = row.getAttribute('data-name');
+            const dept = row.getAttribute('data-dept');
+            const year = row.getAttribute('data-year');
+            
+            // Update modal content
+            document.getElementById('modalStudentId').textContent = id;
+            document.getElementById('modalStudentName').textContent = name;
+            document.getElementById('modalStudentDept').textContent = dept;
+            document.getElementById('modalStudentYear').textContent = year;
+            
+            // Reset to first tab when opening
+            const gradesTab = document.getElementById('grades-tab');
+            const gradesPanel = document.getElementById('grades-panel');
+            
+            // Remove active from all tabs and panels
+            document.querySelectorAll('.nav-link').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(panel => {
+                panel.classList.remove('show', 'active');
+            });
+            
+            // Activate first tab
+            gradesTab.classList.add('active');
+            gradesPanel.classList.add('show', 'active');
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('studentInfoModal'));
+            modal.show();
+        }
+
+        // Print Modal Content
+        function printModalContent() {
+            window.print();
+        }
+
+        // Ensure students content is visible when modal closes
+        document.getElementById('studentInfoModal').addEventListener('hidden.bs.modal', function () {
+            // Make sure student management section is visible
+            document.getElementById('students-content').classList.add('active');
+            
+            // Restore the active state to Students nav link
+            $('.nav-link').removeClass('active');
+            $('.nav-link[data-target="students-content"]').addClass('active');
+        });
+
+        // Create Announcement Functionality
+        document.getElementById('createAnnouncementBtn').addEventListener('click', function() {
+            // Clear form fields
+            document.getElementById('announcementTitle').value = '';
+            document.getElementById('announcementContent').value = '';
+            document.getElementById('announcementCategory').value = 'General';
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('createAnnouncementModal'));
+            modal.show();
+        });
+
+        // Publish Announcement
+        document.getElementById('publishAnnouncementBtn').addEventListener('click', function() {
+            const title = document.getElementById('announcementTitle').value.trim();
+            const content = document.getElementById('announcementContent').value.trim();
+            const category = document.getElementById('announcementCategory').value;
+            
+            // Validate inputs
+            if (!title || !content) {
+                alert('Please fill in all required fields (Title and Content)');
+                return;
+            }
+            
+            // Create announcement item
+            const announcementList = document.querySelector('#announcements-content .list-group');
+            const newAnnouncement = document.createElement('div');
+            newAnnouncement.className = 'list-group-item';
+            newAnnouncement.innerHTML = `
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">${title} <span class="badge bg-secondary">${category}</span></h5>
+                    <small class="text-muted">Just now</small>
+                </div>
+                <p class="mb-1">${content}</p>
+                <div class="btn-group mt-2">
+                    <button class="btn btn-sm btn-primary" onclick="editAnnouncement(this)"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteAnnouncement(this)"><i class="fas fa-trash-alt"></i> Delete</button>
+                </div>
+            `;
+            
+            // Add to top of list
+            announcementList.insertBefore(newAnnouncement, announcementList.firstChild);
+            
+            // Update counter in dashboard
+            const announcementCounter = document.querySelector('#dashboard-content .col-md-3:nth-child(3) h2');
+            if (announcementCounter) {
+                const currentCount = parseInt(announcementCounter.textContent);
+                announcementCounter.textContent = currentCount + 1;
+            }
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createAnnouncementModal'));
+            modal.hide();
+            
+            // Show success message
+            showAnnouncementSuccess(title);
+        });
+
+        // Show success message for announcement
+        function showAnnouncementSuccess(title) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show';
+            alert.innerHTML = `
+                <i class="bi bi-check-circle-fill"></i> 
+                <strong>Success!</strong> Announcement "${title}" has been published.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const announcementsSection = document.getElementById('announcements-content');
+            announcementsSection.insertBefore(alert, announcementsSection.firstChild.nextSibling);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        // Edit announcement function
+        function editAnnouncement(button) {
+            const listItem = button.closest('.list-group-item');
+            const title = listItem.querySelector('h5').textContent.trim();
+            const content = listItem.querySelector('p').textContent.trim();
+            
+            // For now, just show an alert. You can implement a full edit modal later
+            alert('Edit functionality for: ' + title);
+        }
+
+        // Delete announcement function
+        function deleteAnnouncement(button) {
+            if (confirm('Are you sure you want to delete this announcement?')) {
+                const listItem = button.closest('.list-group-item');
+                listItem.remove();
+                
+                // Update counter in dashboard
+                const announcementCounter = document.querySelector('#dashboard-content .col-md-3:nth-child(3) h2');
+                if (announcementCounter) {
+                    const currentCount = parseInt(announcementCounter.textContent);
+                    if (currentCount > 0) {
+                        announcementCounter.textContent = currentCount - 1;
+                    }
+                }
+            }
+        }
+
+        // Leaderboard filtering functionality
+        function filterLeaderboard() {
+            const honorFilter = document.getElementById('honorFilter').value;
+            const deptFilter = document.getElementById('departmentFilterLeaderboard').value;
+            const yearFilter = document.getElementById('academicYearFilter').value;
+            const searchQuery = document.getElementById('leaderboardSearch').value.toLowerCase();
+            const tbody = document.getElementById('leaderboardTable').getElementsByTagName('tbody')[0];
+
+            Array.from(tbody.rows).forEach(row => {
+                const rowHonor = row.getAttribute('data-honor');
+                const rowDept = row.getAttribute('data-dept');
+                const rowYear = row.getAttribute('data-year');
+                const studentId = row.cells[1].textContent.toLowerCase();
+                const studentName = row.cells[2].textContent.toLowerCase();
+
+                const matchesHonor = !honorFilter || rowHonor === honorFilter;
+                const matchesDept = !deptFilter || rowDept === deptFilter;
+                const matchesYear = !yearFilter || rowYear === yearFilter;
+                const matchesSearch = !searchQuery || studentId.includes(searchQuery) || studentName.includes(searchQuery);
+
+                row.style.display = matchesHonor && matchesDept && matchesYear && matchesSearch ? '' : 'none';
+            });
+        }
+
+        // Add event listener for leaderboard search
+        document.getElementById('leaderboardSearch').addEventListener('input', filterLeaderboard);
+    </script>
+</body>
+</html>
