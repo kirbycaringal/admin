@@ -572,6 +572,17 @@
     .bg-maroon {
         background-color: var(--maroon);
     }
+    
+    /* Ensure table headers with bg-maroon have proper styling */
+    thead.bg-maroon {
+        background-color: var(--maroon) !important;
+    }
+    
+    thead.bg-maroon th {
+        background-color: var(--maroon) !important;
+        color: white !important;
+        border-color: var(--maroon) !important;
+    }
 
     .table-hover tbody tr:hover {
         background-color: rgba(128, 0, 0, 0.05);
@@ -594,6 +605,92 @@
         font-size: 0.85rem;
         white-space: nowrap;
         border: none;
+    }
+    
+    #leaderboardTable thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+    
+    #leaderboardTable thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+    
+    /* Student table header styling - match leaderboards */
+    #studentsTable thead th {
+        background: linear-gradient(135deg, #800000 0%, #a52a2a 100%) !important;
+        color: white !important;
+        border-color: #800000 !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 10px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        border: none;
+    }
+    
+    #studentsTable thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+    
+    #studentsTable thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+    
+    #studentsTable tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    #studentsTable tbody tr:hover {
+        background-color: #fff5f5;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    #studentsTable tbody td {
+        padding: 12px 10px;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+    
+    /* Teacher table header styling - match leaderboards */
+    #teachersTable thead th {
+        background: linear-gradient(135deg, #800000 0%, #a52a2a 100%) !important;
+        color: white !important;
+        border-color: #800000 !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 12px 10px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        border: none;
+    }
+    
+    #teachersTable thead th:first-child {
+        border-top-left-radius: 10px;
+    }
+    
+    #teachersTable thead th:last-child {
+        border-top-right-radius: 10px;
+    }
+    
+    #teachersTable tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    #teachersTable tbody tr:hover {
+        background-color: #fff5f5;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    #teachersTable tbody td {
+        padding: 12px 10px;
+        vertical-align: middle;
+        font-size: 0.9rem;
     }
     
     #leaderboardTable tbody tr {
@@ -621,6 +718,26 @@
     
     /* Table wrapper improvements */
     #leaderboards-content .table-responsive {
+        border-radius: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        background: white;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Student Management table wrapper */
+    #students-content .table-responsive {
+        border-radius: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        background: white;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Teacher Management table wrapper */
+    #teachers .table-responsive {
         border-radius: 10px;
         overflow-x: auto;
         overflow-y: hidden;
@@ -691,6 +808,7 @@
     .filter-section .form-label i {
         color: #800000;
         font-size: 0.85rem;
+        margin-right: 0.3rem;
     }
     
     .filter-section .form-select {
@@ -726,6 +844,65 @@
         font-size: 0.95rem;
         border-radius: 8px;
         transition: all 0.3s ease;
+    }
+    
+    #leaderboards-content #leaderboardSearch:focus {
+        border-color: #800000;
+        box-shadow: 0 0 0 0.2rem rgba(128, 0, 0, 0.15);
+    }
+    
+    /* Student Management search bar styling */
+    #students-content .form-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    #students-content .form-label i {
+        color: #800000;
+        font-size: 0.85rem;
+        margin-right: 0.3rem;
+    }
+    
+    #students-content #studentSearch {
+        border: 1px solid #dee2e6;
+        padding: 0.625rem 0.875rem;
+        font-size: 0.95rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    #students-content #studentSearch:focus {
+        border-color: #800000;
+        box-shadow: 0 0 0 0.2rem rgba(128, 0, 0, 0.15);
+    }
+    
+    /* Teacher Management search bar styling */
+    #teachers .form-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    #teachers .form-label i {
+        color: #800000;
+        font-size: 0.85rem;
+        margin-right: 0.3rem;
+    }
+    
+    #teachers #teacherSearch {
+        border: 1px solid #dee2e6;
+        padding: 0.625rem 0.875rem;
+        font-size: 0.95rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    #teachers #teacherSearch:focus {
+        border-color: #800000;
+        box-shadow: 0 0 0 0.2rem rgba(128, 0, 0, 0.15);
     }
     
     #leaderboards-content #leaderboardSearch:focus {
@@ -827,6 +1004,20 @@
             letter-spacing: 0.2px;
         }
         
+        /* Student table mobile adjustments */
+        #studentsTable thead th {
+            font-size: 0.6rem;
+            padding: 6px 2px;
+            letter-spacing: 0.2px;
+        }
+        
+        /* Teacher table mobile adjustments */
+        #teachersTable thead th {
+            font-size: 0.6rem;
+            padding: 6px 2px;
+            letter-spacing: 0.2px;
+        }
+        
         #leaderboardTable tbody td {
             font-size: 0.7rem;
             padding: 6px 2px;
@@ -915,6 +1106,36 @@
         
         #leaderboards-content .section-title {
             font-size: 1.4rem;
+        }
+        
+        /* Student Management search bar mobile adjustments */
+        #students-content .form-label {
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        #students-content .form-label i {
+            font-size: 0.8rem;
+        }
+        
+        #students-content #studentSearch {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        /* Teacher Management search bar mobile adjustments */
+        #teachers .form-label {
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        #teachers .form-label i {
+            font-size: 0.8rem;
+        }
+        
+        #teachers #teacherSearch {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
         }
     }
 
@@ -1417,12 +1638,13 @@
                 <div class="card-body">
                     <h2 class="mb-3"><i class="bi bi-person-video3"></i> Teachers Management</h2>
 
-<div class="mb-3">
-    <div class="input-group w-100">
-        <input type="text" class="form-control" id="teacherSearch" placeholder="Search teachers...">
-        <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
-    </div>
-</div>
+                    <!-- Search Bar -->
+                    <div class="mb-4">
+                        <label for="teacherSearch" class="form-label">
+                            <i class="fas fa-search"></i> Search
+                        </label>
+                        <input type="text" class="form-control" id="teacherSearch" placeholder="Search by Teacher ID or Name...">
+                    </div>
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
     <!-- <button class="btn btn-maroon"><i class="bi bi-plus"></i> Add New Teacher</button> -->
@@ -1435,9 +1657,11 @@
 
                     <!-- Teacher Filter Section -->
                     <div class="filter-section mb-4">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="departmentFilter" class="form-label">Filter by Department/Status</label>
+                        <div class="row g-3">
+                            <div class="col-md-6 col-12">
+                                <label for="departmentFilter" class="form-label">
+                                    <i class="fas fa-building me-1"></i> Filter by Department/Status
+                                </label>
                                 <select class="form-select" id="departmentFilter">
                                     <option value="">All Active Teachers</option>
                                     <option value="Mathematics">Mathematics</option>
@@ -1448,15 +1672,17 @@
                                     <option value="archived">Archived Teachers</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 d-flex align-items-end">
-                                <button class="btn btn-secondary w-100" id="resetTeacherFilters">Reset Filters</button>
+                            <div class="col-md-6 col-12 d-flex align-items-end">
+                                <button class="btn btn-secondary w-100" id="resetTeacherFilters">
+                                    <i class="fas fa-redo me-1"></i> Reset Filters
+                                </button>
                             </div>
                         </div>
                     </div>
 
                     <div class="table-responsive">
                         <table class="table table-hover" id="teachersTable">
-                            <thead class="table-light">
+                            <thead class="bg-maroon text-white">
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
@@ -1525,18 +1751,20 @@
                     <h2 class="mb-3"><i class="fas fa-user-graduate"></i> Student Management</h2>
 
                     <!-- Search Bar -->
-                    <div class="mb-3">
-                        <div class="input-group w-100">
-                            <input type="text" class="form-control" id="studentSearch" placeholder="Search students...">
-                            <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
-                        </div>
+                    <div class="mb-4">
+                        <label for="studentSearch" class="form-label">
+                            <i class="fas fa-search"></i> Search
+                        </label>
+                        <input type="text" class="form-control" id="studentSearch" placeholder="Search by Student ID or Name...">
                     </div>
 
                     <!-- Student Filter Section -->
                     <div class="filter-section mb-4">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label for="studentDepartmentFilter" class="form-label">Filter by Department</label>
+                        <div class="row g-3">
+                            <div class="col-md-4 col-12">
+                                <label for="studentDepartmentFilter" class="form-label">
+                                    <i class="fas fa-building me-1"></i> Filter by Department
+                                </label>
                                 <select class="form-select" id="studentDepartmentFilter">
                                     <option value="">All Departments</option>
                                     <option value="BSCS">BSCS</option>
@@ -1546,8 +1774,10 @@
                                     <option value="BSBA">BSBA</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label for="studentYearFilter" class="form-label">Filter by Year</label>
+                            <div class="col-md-4 col-12">
+                                <label for="studentYearFilter" class="form-label">
+                                    <i class="fas fa-graduation-cap me-1"></i> Filter by Year
+                                </label>
                                 <select class="form-select" id="studentYearFilter">
                                     <option value="">All Years</option>
                                     <option value="1st Year">1st Year</option>
@@ -1556,15 +1786,17 @@
                                     <option value="4th Year">4th Year</option>
                                 </select>
                             </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button class="btn btn-secondary w-100" id="resetStudentFilters">Reset Filters</button>
+                            <div class="col-md-4 col-12 d-flex align-items-end">
+                                <button class="btn btn-secondary w-100" id="resetStudentFilters">
+                                    <i class="fas fa-redo me-1"></i> Reset Filters
+                                </button>
                             </div>
                         </div>
                     </div>
 
                     <div class="table-responsive">
                         <table class="table table-hover" id="studentsTable">
-                            <thead class="table-light">
+                            <thead class="bg-maroon text-white">
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
