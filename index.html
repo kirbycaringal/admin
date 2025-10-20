@@ -1624,7 +1624,7 @@
                             <i class="fas fa-clipboard-check fa-2x text-maroon mb-2"></i>
                             <h6 class="fw-bold text-maroon">Enable Encoding</h6>
                             <div class="form-check form-switch d-flex justify-content-center">
-    <input class="form-check-input" type="checkbox" id="encodingSwitch" checked style="transform: scale(1.3);">
+    <input class="form-check-input" type="checkbox" id="encodingSwitch" style="transform: scale(1.3);">
 </div>
                         </div>
                     </div>
@@ -1692,49 +1692,64 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr data-teacher-id="T001">
+                                <tr data-teacher-id="T001" data-encoding-enabled="false">
                                     <td>T001</td>
                                     <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T001', 'Dr. Sarah Johnson')">Dr. Sarah Johnson</a></td>
                                     <td>Mathematics</td>
                                     <td>sarah.johnson@school.edu</td>
                                     <td>
-                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                        <button class="btn btn-sm btn-danger encoding-btn me-1" onclick="toggleEncoding(this)" title="Encoding Disabled">
+                                            <i class="bi bi-lock-fill"></i> Disabled
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary"><i class="bi bi-archive"></i> Archive</button>
                                     </td>
                                 </tr>
-                                <tr data-teacher-id="T002">
+                                <tr data-teacher-id="T002" data-encoding-enabled="false">
                                     <td>T002</td>
                                     <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T002', 'Prof. Michael Chen')">Prof. Michael Chen</a></td>
                                     <td>Computer Science</td>
                                     <td>michael.chen@school.edu</td>
                                     <td>
-                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                        <button class="btn btn-sm btn-danger encoding-btn me-1" onclick="toggleEncoding(this)" title="Encoding Disabled">
+                                            <i class="bi bi-lock-fill"></i> Disabled
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary"><i class="bi bi-archive"></i> Archive</button>
                                     </td>
                                 </tr>
-                                <tr data-teacher-id="T003">
+                                <tr data-teacher-id="T003" data-encoding-enabled="false">
                                     <td>T003</td>
                                     <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T003', 'Ms. Emily Rodriguez')">Ms. Emily Rodriguez</a></td>
                                     <td>English Literature</td>
                                     <td>emily.rodriguez@school.edu</td>
                                     <td>
-                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                        <button class="btn btn-sm btn-danger encoding-btn me-1" onclick="toggleEncoding(this)" title="Encoding Disabled">
+                                            <i class="bi bi-lock-fill"></i> Disabled
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary"><i class="bi bi-archive"></i> Archive</button>
                                     </td>
                                 </tr>
-                                <tr data-teacher-id="T004">
+                                <tr data-teacher-id="T004" data-encoding-enabled="false">
                                     <td>T004</td>
                                     <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T004', 'Dr. Robert Wilson')">Dr. Robert Wilson</a></td>
                                     <td>Physics</td>
                                     <td>robert.wilson@school.edu</td>
                                     <td>
-                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                        <button class="btn btn-sm btn-danger encoding-btn me-1" onclick="toggleEncoding(this)" title="Encoding Disabled">
+                                            <i class="bi bi-lock-fill"></i> Disabled
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary"><i class="bi bi-archive"></i> Archive</button>
                                     </td>
                                 </tr>
-                                <tr data-teacher-id="T005">
+                                <tr data-teacher-id="T005" data-encoding-enabled="false">
                                     <td>T005</td>
                                     <td><a href="#" class="teacher-name" onclick="showTeacherClasses('T005', 'Ms. Lisa Thompson')">Ms. Lisa Thompson</a></td>
                                     <td>Chemistry</td>
                                     <td>lisa.thompson@school.edu</td>
                                     <td>
-                                        <button class="btn btn-sm btn-maroon"><i class="bi bi-archive"></i> Archive</button>
+                                        <button class="btn btn-sm btn-danger encoding-btn me-1" onclick="toggleEncoding(this)" title="Encoding Disabled">
+                                            <i class="bi bi-lock-fill"></i> Disabled
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary"><i class="bi bi-archive"></i> Archive</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -2165,7 +2180,7 @@
         let archivedTeachers = [];
 
         // Archive button event listeners
-        teachersTable.querySelectorAll('button.btn-maroon').forEach(btn => {
+        teachersTable.querySelectorAll('button.btn-secondary').forEach(btn => {
             btn.addEventListener('click', function () {
                 const row = this.closest('tr');
                 const teacherId = row.getAttribute('data-teacher-id');
@@ -2200,7 +2215,15 @@
             
             // Mark row as archived
             row.setAttribute('data-archived', 'true');
-            row.style.display = 'none';
+            
+            // Remove clickable link from name - make it plain text
+            const nameCell = row.cells[1];
+            const teacherName = nameCell.textContent;
+            nameCell.innerHTML = teacherName;
+            
+            // Replace action buttons with archive date
+            const actionCell = row.cells[4];
+            actionCell.innerHTML = `<span class="text-muted">Archived: ${teacherData.archivedAt}</span>`;
             
             // Show success message
             showArchiveSuccess(teacherData.name);
@@ -2501,12 +2524,7 @@
             return 'Failed';
         }
 
-        // Enable/disable grade encoding for teachers table
-        document.getElementById('enableEncodingToggle').addEventListener('change', function() {
-            // This would control whether teachers can encode grades
-            const status = this.checked ? 'enabled' : 'disabled';
-            alert(`Grade encoding has been ${status} for all teachers`);
-        });
+        // Enable/disable grade encoding - handled by global encoding switch functionality above
 
         // Student Management Functionality
         const studentDepartmentFilter = document.getElementById('studentDepartmentFilter');
@@ -2723,6 +2741,126 @@
                 row.style.display = matchesHonor && matchesDept && matchesYear && matchesSearch ? '' : 'none';
             });
         }
+
+
+        // Toggle Encoding function for teachers
+        function toggleEncoding(button) {
+            const row = button.closest('tr');
+            const teacherId = row.getAttribute('data-teacher-id');
+            const isEnabled = row.getAttribute('data-encoding-enabled') === 'true';
+            
+            if (isEnabled) {
+                // Disable encoding
+                row.setAttribute('data-encoding-enabled', 'false');
+                button.className = 'btn btn-sm btn-danger encoding-btn me-1';
+                button.innerHTML = '<i class="bi bi-lock-fill"></i> Disabled';
+                button.title = 'Encoding Disabled';
+                
+                // Update dashboard switch
+                const dashboardSwitch = document.getElementById('encodingSwitch');
+                const teacherMgmtSwitch = document.getElementById('enableEncodingToggle');
+                if (dashboardSwitch) {
+                    const allTeachers = document.querySelectorAll('#teachersTable tbody tr');
+                    const allDisabled = Array.from(allTeachers).every(tr => 
+                        tr.getAttribute('data-encoding-enabled') === 'false'
+                    );
+                    if (allDisabled) {
+                        dashboardSwitch.checked = false;
+                        if (teacherMgmtSwitch) teacherMgmtSwitch.checked = false;
+                    }
+                }
+                
+                alert(`Encoding disabled for ${teacherId}`);
+            } else {
+                // Enable encoding
+                row.setAttribute('data-encoding-enabled', 'true');
+                button.className = 'btn btn-sm btn-success encoding-btn me-1';
+                button.innerHTML = '<i class="bi bi-unlock-fill"></i> Enabled';
+                button.title = 'Encoding Enabled';
+                
+                // Update dashboard switch
+                const dashboardSwitch = document.getElementById('encodingSwitch');
+                const teacherMgmtSwitch = document.getElementById('enableEncodingToggle');
+                if (dashboardSwitch) {
+                    const allTeachers = document.querySelectorAll('#teachersTable tbody tr');
+                    const allEnabled = Array.from(allTeachers).every(tr => 
+                        tr.getAttribute('data-encoding-enabled') === 'true'
+                    );
+                    if (allEnabled) {
+                        dashboardSwitch.checked = true;
+                        if (teacherMgmtSwitch) teacherMgmtSwitch.checked = true;
+                    }
+                }
+                
+                alert(`Encoding enabled for ${teacherId}`);
+            }
+        }
+        
+        // Show notification helper function
+        function showNotification(message, type) {
+            alert(message);
+        }
+        
+        // Global Encoding Switch functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const encodingSwitch = document.getElementById('encodingSwitch');
+            const teacherMgmtSwitch = document.getElementById('enableEncodingToggle');
+            
+            function updateAllTeachers(isEnabled) {
+                const teachersTable = document.getElementById('teachersTable');
+                if (teachersTable) {
+                    const allRows = teachersTable.querySelectorAll('tbody tr');
+                    let count = 0;
+                    
+                    allRows.forEach(row => {
+                        const encodingBtn = row.querySelector('.encoding-btn');
+                        
+                        if (isEnabled) {
+                            row.setAttribute('data-encoding-enabled', 'true');
+                            if (encodingBtn) {
+                                encodingBtn.className = 'btn btn-sm btn-success encoding-btn me-1';
+                                encodingBtn.innerHTML = '<i class="bi bi-unlock-fill"></i> Enabled';
+                                encodingBtn.title = 'Encoding Enabled';
+                            }
+                        } else {
+                            row.setAttribute('data-encoding-enabled', 'false');
+                            if (encodingBtn) {
+                                encodingBtn.className = 'btn btn-sm btn-danger encoding-btn me-1';
+                                encodingBtn.innerHTML = '<i class="bi bi-lock-fill"></i> Disabled';
+                                encodingBtn.title = 'Encoding Disabled';
+                            }
+                        }
+                        count++;
+                    });
+                    
+                    if (isEnabled) {
+                        alert('Encoding enabled');
+                    } else {
+                        alert('Encoding disabled');
+                    }
+                }
+            }
+            
+            if (encodingSwitch) {
+                encodingSwitch.addEventListener('change', function() {
+                    const isEnabled = this.checked;
+                    if (teacherMgmtSwitch) {
+                        teacherMgmtSwitch.checked = isEnabled;
+                    }
+                    updateAllTeachers(isEnabled);
+                });
+            }
+            
+            if (teacherMgmtSwitch) {
+                teacherMgmtSwitch.addEventListener('change', function() {
+                    const isEnabled = this.checked;
+                    if (encodingSwitch) {
+                        encodingSwitch.checked = isEnabled;
+                    }
+                    updateAllTeachers(isEnabled);
+                });
+            }
+        });
 
         // Add event listener for leaderboard search
         document.getElementById('leaderboardSearch').addEventListener('input', filterLeaderboard);
