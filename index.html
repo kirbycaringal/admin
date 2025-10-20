@@ -1864,29 +1864,7 @@
                 <div class="card-body">
                      <h2 class="mb-3"><i class="fas fa-bullhorn"></i> Announcements</h2>
                   <div class="list-group mb-3">
-                    <div class="list-group-item">
-                      <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">Academic Excellence Awards</h5>
-                        <small class="text-muted">2 days ago</small>
-                      </div>
-                      <p class="mb-1">Congratulations to all students who achieved academic excellence this semester!</p>
-                      <div class="btn-group mt-2">
-                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
-                      </div>
-                    </div>
 
-                    <div class="list-group-item">
-                      <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">Holiday Notice</h5>
-                        <small class="text-muted">1 week ago</small>
-                      </div>
-                      <p class="mb-1">The school will be closed from December 24 to January 2 for winter break.</p>
-                      <div class="btn-group mt-2">
-                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
-                      </div>
-                    </div>
                   </div>
 
                   <!-- Responsive Button Placement -->
@@ -2620,6 +2598,14 @@
             document.getElementById('announcementContent').value = '';
             document.getElementById('announcementCategory').value = 'General';
             
+            // Reset modal to create mode
+            document.getElementById('createAnnouncementModalLabel').innerHTML = '<i class="fas fa-bullhorn me-2"></i>Create New Announcement';
+            const publishBtn = document.getElementById('publishAnnouncementBtn');
+            publishBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Publish Announcement';
+            publishBtn.removeAttribute('data-editing');
+            publishBtn.removeAttribute('data-announcement-item');
+            delete publishBtn.announcementItem;
+            
             // Show modal
             const modal = new bootstrap.Modal(document.getElementById('createAnnouncementModal'));
             modal.show();
@@ -2637,38 +2623,55 @@
                 return;
             }
             
-            // Create announcement item
-            const announcementList = document.querySelector('#announcements-content .list-group');
-            const newAnnouncement = document.createElement('div');
-            newAnnouncement.className = 'list-group-item';
-            newAnnouncement.innerHTML = `
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">${title} <span class="badge bg-secondary">${category}</span></h5>
-                    <small class="text-muted">Just now</small>
-                </div>
-                <p class="mb-1">${content}</p>
-                <div class="btn-group mt-2">
-                    <button class="btn btn-sm btn-primary" onclick="editAnnouncement(this)"><i class="fas fa-edit"></i> Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteAnnouncement(this)"><i class="fas fa-trash-alt"></i> Delete</button>
-                </div>
-            `;
+            const isEditing = this.getAttribute('data-editing') === 'true';
             
-            // Add to top of list
-            announcementList.insertBefore(newAnnouncement, announcementList.firstChild);
-            
-            // Update counter in dashboard
-            const announcementCounter = document.querySelector('#dashboard-content .col-md-3:nth-child(3) h2');
-            if (announcementCounter) {
-                const currentCount = parseInt(announcementCounter.textContent);
-                announcementCounter.textContent = currentCount + 1;
+            if (isEditing) {
+                // Update existing announcement
+                const listItem = this.announcementItem;
+                const badgeClass = getCategoryBadgeClass(category);
+                listItem.querySelector('h5').innerHTML = `${title} <span class="badge ${badgeClass}">${category}</span>`;
+                listItem.querySelector('p').textContent = content;
+                listItem.querySelector('small').textContent = 'Updated just now';
+                
+                alert('Announcement updated successfully');
+                
+                // Reset editing state
+                this.removeAttribute('data-editing');
+                this.removeAttribute('data-announcement-item');
+                delete this.announcementItem;
+            } else {
+                // Create new announcement
+                const announcementList = document.querySelector('#announcements-content .list-group');
+                const newAnnouncement = document.createElement('div');
+                newAnnouncement.className = 'list-group-item';
+                newAnnouncement.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">${title} <span class="badge ${getCategoryBadgeClass(category)}">${category}</span></h5>
+                        <small class="text-muted">Just now</small>
+                    </div>
+                    <p class="mb-1">${content}</p>
+                    <div class="btn-group mt-2">
+                        <button class="btn btn-sm btn-primary" onclick="editAnnouncement(this)"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteAnnouncement(this)"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </div>
+                `;
+                
+                // Add to top of list
+                announcementList.insertBefore(newAnnouncement, announcementList.firstChild);
+                
+                // Update counter in dashboard
+                const announcementCounter = document.querySelector('#dashboard-content .col-md-3:nth-child(3) h2');
+                if (announcementCounter) {
+                    const currentCount = parseInt(announcementCounter.textContent);
+                    announcementCounter.textContent = currentCount + 1;
+                }
+                
+                alert('Announcement published successfully');
             }
             
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('createAnnouncementModal'));
             modal.hide();
-            
-            // Show success message
-            showAnnouncementSuccess(title);
         });
 
         // Show success message for announcement
@@ -2691,14 +2694,52 @@
             }, 5000);
         }
 
+        // Get category badge color
+        function getCategoryBadgeClass(category) {
+            switch(category) {
+                case 'Important':
+                    return 'bg-danger';
+                case 'Academic':
+                    return 'bg-primary';
+                case 'Holiday':
+                    return 'bg-danger';
+                case 'Event':
+                    return 'bg-success';
+                case 'General':
+                default:
+                    return 'bg-secondary';
+            }
+        }
+
         // Edit announcement function
         function editAnnouncement(button) {
             const listItem = button.closest('.list-group-item');
-            const title = listItem.querySelector('h5').textContent.trim();
+            const titleElement = listItem.querySelector('h5');
+            const badge = titleElement.querySelector('.badge');
+            const title = titleElement.childNodes[0].textContent.trim();
+            const category = badge ? badge.textContent.trim() : 'General';
             const content = listItem.querySelector('p').textContent.trim();
             
-            // For now, just show an alert. You can implement a full edit modal later
-            alert('Edit functionality for: ' + title);
+            // Populate modal with existing data
+            document.getElementById('announcementTitle').value = title;
+            document.getElementById('announcementContent').value = content;
+            document.getElementById('announcementCategory').value = category;
+            
+            // Change modal title to "Edit Announcement"
+            document.getElementById('createAnnouncementModalLabel').innerHTML = '<i class="fas fa-edit me-2"></i>Edit Announcement';
+            
+            // Change button text to "Update Announcement"
+            const publishBtn = document.getElementById('publishAnnouncementBtn');
+            publishBtn.innerHTML = '<i class="fas fa-save me-1"></i>Update Announcement';
+            
+            // Store reference to the announcement being edited
+            publishBtn.setAttribute('data-editing', 'true');
+            publishBtn.setAttribute('data-announcement-item', '');
+            publishBtn.announcementItem = listItem;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('createAnnouncementModal'));
+            modal.show();
         }
 
         // Delete announcement function
